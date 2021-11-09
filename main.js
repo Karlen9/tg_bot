@@ -2,6 +2,8 @@ import moment from "moment";
 import dotenv from "dotenv";
 import TelegramBot from "node-telegram-bot-api";
 import pkg from "@prisma/client";
+import uuid4 from "uuid4";
+import { equal } from "node:assert/strict";
 const { PrismaClient } = pkg;
 dotenv.config();
 
@@ -46,11 +48,21 @@ const addStartTime = () => {
 const start = async () => {
   // let users = await User.findAll({ chatId });
   // console.log("users", users);
+
   try {
   } catch (error) {
     console.log("Ошибка при подключении к Базе Данных ", error);
   }
   bot.on("message", async (msg) => {
+    const fName = msg.from.first_name;
+
+    const newUser = await prisma.user.create({
+      data: {
+        first_name: fName,
+        last_name: msg.from.last_name,
+        id: uuid4(),
+      },
+    });
     const chatId = msg.chat.id;
     const text = msg.text;
     const commands = [
@@ -65,31 +77,68 @@ const start = async () => {
     ];
 
     try {
+      let enterance;
+      let quit;
       if (text === "/start") {
         return bot.sendMessage(
           chatId,
-          `Добро пожаловать, ${msg.from.first_name}!`
+          `Добро пожаловать, ${newUser.first_name}!`
         );
       } else if (text === "/info") {
+        // const users = await prisma.user.findUnique({
+        //   where: { UserWhereUniqueInput: { id: newUser.id } },
+        // });
+
+        const user = await prisma.user.findMany({
+          where: { first_name: { equals: "Карлен" } },
+        });
         await bot.sendMessage(
           chatId,
           `Тебя зовут: ${msg.from.first_name ? msg.from.first_name : ""} ${
             msg.from.last_name ? msg.from.last_name : ""
-          }, твой id: ${msg.from.id}, `
+          }, твой id: ${msg.from.id}, ${user[0]?.created_at}`
         );
       } else if (text === "/date") {
         return await bot.sendMessage(chatId, `Сегодня: ${date} `);
       } else if (text === "/enter") {
+        enterance = await prisma.enter.create({
+          data: {
+            id: uuid4(),
+            author: { connect: { id: newUser?.id } },
+          },
+        });
+
         bot.sendMessage(
           chatId,
-          "Напишите время входа в офис: ",
-          currentTimeOption
+          `Вы зашли в офис в ${
+            enterance.created_at.getHours() < 10
+              ? "0" + enterance.created_at.getHours()
+              : ""
+          }:${
+            enterance.created_at.getMinutes() < 10
+              ? "0" + enterance.created_at.getMinutes()
+              : ""
+          }`
         );
       } else if (text === "/exit") {
+        quit = await prisma.quit.create({
+          data: {
+            id: uuid4(),
+            author: { connect: { id: newUser?.id } },
+          },
+        });
+
         bot.sendMessage(
           chatId,
-          "Напишите время выхода из офиса: ",
-          currentTimeOption
+          `Вы вышли из офиса в ${
+            quit.created_at.getHours() < 10
+              ? "0" + quit.created_at.getHours()
+              : ""
+          }:${
+            quit.created_at.getMinutes() < 10
+              ? "0" + quit.created_at.getMinutes()
+              : ""
+          }`
         );
       } else if (text === "Привет") {
         return bot.sendMessage(chatId, `Привет, ${msg.from.first_name}`);

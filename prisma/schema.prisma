@@ -1,6 +1,7 @@
 datasource db {
   provider = "postgresql"
-  url      = "postgres://vrrymadisthmjc:3b7fa52d939cca9426b5fabcf85625ebf40d7087623505475d56b86b0046a183@ec2-3-227-181-85.compute-1.amazonaws.com:5432/d4viqgcmov52r"
+  url      = "postgres://zepentumyxyyaw:02a1137498baf23d3ed919ea3a5b6ceafece9b4fa2ded447da758f8583a9892e@ec2-44-194-54-186.compute-1.amazonaws.com:5432/dclgf7n7a321r7"
+  shadowDatabaseUrl = "postgres://jehkqlcxtnpvuv:ffa9395d463945611bf4aebd4362b22109e9732581c452d261539017ed97e0d8@ec2-23-23-181-251.compute-1.amazonaws.com:5432/d723et5t083ka9"
 }
 
 generator client {
@@ -8,19 +9,26 @@ generator client {
 }
 
 model User {
-    id          String     @id 
+    id          String     @id @unique
     created_at  DateTime   @default(now())
     first_name  String     
     last_name   String 
     enters      Enter[]
-    quits       DateTime[]
+    quits       Quit[]
 }
 
 model Enter {
-    id          String     @id 
+    id          String     @id @unique
     created_at  DateTime   @default(now())  
     author      User?      @relation(fields: [authorId], references: [id])
-    authorId    String     
+    authorId    String     @unique
+}
+
+model Quit {
+    id          String     @id @unique
+    created_at  DateTime   @default(now())
+    author      User?      @relation(fields: [authorId], references: [id])
+    authorId    String     @unique
 }
 
 enum Role {
