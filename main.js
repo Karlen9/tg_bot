@@ -79,6 +79,7 @@ const start = async () => {
     try {
       let enterance;
       let quit;
+      let session;
       if (text === "/start") {
         return bot.sendMessage(
           chatId,
@@ -113,11 +114,11 @@ const start = async () => {
           `Вы зашли в офис в ${
             enterance.created_at.getHours() < 10
               ? "0" + enterance.created_at.getHours()
-              : ""
+              : enterance.created_at.getHours()
           }:${
             enterance.created_at.getMinutes() < 10
               ? "0" + enterance.created_at.getMinutes()
-              : ""
+              : enterance.created_at.getMinutes()
           }`
         );
       } else if (text === "/exit") {
@@ -128,20 +129,38 @@ const start = async () => {
           },
         });
 
+        session = await prisma.session.create({
+          data: {
+            id: uuid4(),
+            author: { connect: { id: newUser?.id } },
+            duration: "10 минут",
+          },
+        });
+
         bot.sendMessage(
           chatId,
           `Вы вышли из офиса в ${
             quit.created_at.getHours() < 10
               ? "0" + quit.created_at.getHours()
-              : ""
+              : quit.created_at.getHours()
           }:${
             quit.created_at.getMinutes() < 10
               ? "0" + quit.created_at.getMinutes()
-              : ""
-          }`
+              : quit.created_at.getMinutes()
+          } Время в офисе ${session.duration}`
         );
       } else if (text === "Привет") {
         return bot.sendMessage(chatId, `Привет, ${msg.from.first_name}`);
+      } else if (text === "/recs") {
+        const enters = await prisma.enter.findMany({
+          select: { author: true },
+        });
+        const quits = await prisma.quit.findMany({
+          select: { author: true },
+        });
+        const records = [...enters, ...quits];
+        console.log(records);
+        bot.sendMessage(chatId, `blabla ${records}`);
       } else {
         return bot.sendMessage(
           chatId,

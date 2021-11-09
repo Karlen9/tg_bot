@@ -15,6 +15,7 @@ model User {
     last_name   String 
     enters      Enter[]
     quits       Quit[]
+    sessions    Session[] 
 }
 
 model Enter {
@@ -27,6 +28,14 @@ model Enter {
 model Quit {
     id          String     @id @unique
     created_at  DateTime   @default(now())
+    author      User?      @relation(fields: [authorId], references: [id])
+    authorId    String     @unique
+}
+
+model Session {
+    id          String     @id @unique
+    created_at  DateTime   @default(now())
+    duration    String 
     author      User?      @relation(fields: [authorId], references: [id])
     authorId    String     @unique
 }
