@@ -1,8 +1,11 @@
 import moment from "moment";
 import dotenv from "dotenv";
 import TelegramBot from "node-telegram-bot-api";
-
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
 dotenv.config();
+
+const prisma = new PrismaClient();
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 const date = moment().format("MMMM Do, h:mm");

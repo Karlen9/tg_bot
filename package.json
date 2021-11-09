@@ -12,11 +12,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^3.4.2",
     "dotenv": "^10.0.0",
     "moment": "^2.29.1",
     "node": "^17.0.1",
     "node-telegram-bot-api": "^0.54.0",
     "nodemon": "^2.0.14",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "prisma": "^3.4.2"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
   }
 }

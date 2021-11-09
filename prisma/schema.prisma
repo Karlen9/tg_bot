@@ -1,0 +1,29 @@
+datasource db {
+  provider = "postgresql"
+  url      = "postgres://vrrymadisthmjc:3b7fa52d939cca9426b5fabcf85625ebf40d7087623505475d56b86b0046a183@ec2-3-227-181-85.compute-1.amazonaws.com:5432/d4viqgcmov52r"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+    id          String     @id 
+    created_at  DateTime   @default(now())
+    first_name  String     
+    last_name   String 
+    enters      Enter[]
+    quits       DateTime[]
+}
+
+model Enter {
+    id          String     @id 
+    created_at  DateTime   @default(now())  
+    author      User?      @relation(fields: [authorId], references: [id])
+    authorId    String     
+}
+
+enum Role {
+    USER
+    ADMIN
+}
