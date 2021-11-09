@@ -1,0 +1,21 @@
+{
+  "name": "tg_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon bot.js",
+    "start": "node bot.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "moment": "^2.29.1",
+    "node": "^17.0.1",
+    "node-telegram-bot-api": "^0.54.0",
+    "nodemon": "^2.0.14",
+    "pg": "^8.7.1"
+  }
+}
