@@ -106,6 +106,7 @@ const start = async () => {
           data: {
             id: uuid4(),
             author: { connect: { id: newUser?.id } },
+            created_at: new Date(),
           },
         });
 
@@ -126,6 +127,7 @@ const start = async () => {
           data: {
             id: uuid4(),
             author: { connect: { id: newUser?.id } },
+            created_at: new Date(),
           },
         });
 
